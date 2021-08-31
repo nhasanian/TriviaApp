@@ -7,38 +7,33 @@ import DisplayQuestion from './components/DisplayQuestion';
 
 function App() {
   const [questions, setQuestions] = useState([]);
+  const [chosenAnswers, setChosenAnswers] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
   const [numCorrect, setNumCorrect] = useState(0);
   const [name, setName] = useState("");
   const [numQ, setNumQ] = useState(10);
-  const [page, setPage] = useState(1);
+  const [hasHitButton, setHasHitButton] = useState(false);
 
-
-
-  const fetchQuestions = async () => {
-    const myCol = collection(db, 'questions');
-    const response = query(myCol, limit(numQ));
-    const data = await getDocs(response);
-    const qArray = data.docs.map(doc => doc.data());
-    setQuestions(qArray);
-  };
 
   useEffect(() => {
+    const fetchQuestions = async () => {
+      const myCol = collection(db, 'questions');
+      const response = query(myCol, limit(numQ));
+      const data = await getDocs(response);
+      const qArray = data.docs.map(doc => doc.data());
+      setQuestions(qArray);
+    };
+
     fetchQuestions();
-  }, []);
+  }, [numQ]);
 
-  if (questions.length > 0 && curIndex === questions.length) {
-    setPage(2);
+  if (!hasHitButton) {
+    return (<StartPage onNameChange= { 
+      (newVal) => setName(newVal) } 
+      onNumQChange= { (newVal) => setNumQ(newVal) }
+      onHasHitButton= {(newVal) => setHasHitButton(newVal) } /> );
   }
-
-  if (page === 0) {
-    return 
-    // (<StartPage onNameChange= { 
-    //   (newVal) => setName(newVal) } 
-    //   onNumQChange= { (newVal) => setNumQ(newVal) }  
-    //   onPageChange= { (newVal) => setPage(newVal) } /> );
-  }
-  else if (page === 1) {
+  if (curIndex < questions.length) {
     return questions.length > 0 ? (
       <div className="container">
         <DisplayQuestion
@@ -46,24 +41,24 @@ function App() {
           onCurIndexChange={(newVal) => setCurIndex(newVal)}
           index={curIndex}
           onSetNumCorrect={(newVal) => setNumCorrect(newVal)}
-          myNumCorrect={numCorrect} />
+          myNumCorrect={numCorrect}
+          myChosenAnswers = {chosenAnswers}
+          onAnswerChoice = {(newVal) => setChosenAnswers(newVal) }
+           />
       </div>
     ) : (
       <h2 className="text-4xl"> Loading...</h2>
     );
   }
-  else if (page === 2) {
-    return questions.length > 0 ? (
-      <div className="container">
-        <ScorePage myNumCorrect={numCorrect}
-          myName={name}
-          myQuestions={questions} />
-      </div>) : (
-      <h2 className="text-4xl"> Loading...</h2>
-    );
-  } else {
-    return (<h1>Hey therw</h1>);
-  }
+  return questions.length > 0 ? (
+    <div className="container-fluid">
+      <ScorePage myNumCorrect={numCorrect}
+        myName={name}
+        myQuestions={questions}
+        myChosenAnswers = {chosenAnswers} />
+    </div>) : (
+    <h2 className="text-4xl"> Loading...</h2>
+  );
 
 }
 

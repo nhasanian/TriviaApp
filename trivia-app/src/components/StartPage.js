@@ -1,4 +1,7 @@
-const StartPage = ( {onNameChange, onNumQChange, onPageChange}) => {
+const StartPage = ( {
+    onNameChange, 
+    onNumQChange, 
+    onHasHitButton}) => {
     
         return (
         <div className="font-semibold">
@@ -8,16 +11,16 @@ const StartPage = ( {onNameChange, onNumQChange, onPageChange}) => {
                     <form>
                         <label>
                             Please enter your name:     
-                            <input onChange= { e => onNameChange(e.target.value) } type="text" name="name" />
+                            <input className="ml-4 overflow-auto" onChange= { e => onNameChange(e.target.value) } type="text" name="name" />
                         </label>
                         <div>
                         <label>
                             How many questions:       
-                            <input className="mt-4" onChange= { e => onNumQChange(e.target.value) } type="text" pattern="[0-9]*" name="name" />
+                            <input className="mt-4 ml-4 overflow-auto" onChange= { e => onNumQChange(e.target.value) } type="text" pattern="[0-9]*" name="name" />
                         </label>
                         </div>
-                        <button className="text-xl bg-blue-500 w-1/2 p-5 mt-4 font-semibold rounded-lg shadow"
-                    onClick= { () => onPageChange(1) }> Start Test</button>
+                        <button className="text-xl bg-purple-500 w-1/2 p-5 mt-4 font-semibold rounded-lg shadow"
+                    onClick= { () => onHasHitButton(true) }> Start Test</button>
                     </form>
                 </div>
                 
